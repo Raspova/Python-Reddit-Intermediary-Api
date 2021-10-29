@@ -7,8 +7,10 @@ bcrypt==3.1.7
 beautifulsoup4==4.9.3
 bleach==4.1.0
 blivet==3.3.3
+blivet-gui==2.3.0
 bottle==0.12.19
-cached-property==1.5.2
+cairocffi==1.2.0
+CairoSVG==2.5.2
 catfish==4.16.3
 certifi==2020.12.5
 cffi==1.14.5
@@ -37,7 +39,6 @@ filelock==3.0.12
 Flask==2.0.2
 future==0.18.2
 gpg==1.15.1
-gunicorn==20.1.0
 humanize==0.5.1
 idna==2.10
 initial-setup==0.3.90
