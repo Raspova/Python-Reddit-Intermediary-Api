@@ -10,7 +10,6 @@ blivet==3.3.3
 bottle==0.12.19
 cached-property==1.5.2
 cairocffi==1.2.0
-CairoSVG==2.5.2
 catfish==4.16.3
 certifi==2020.12.5
 cffi==1.14.5
