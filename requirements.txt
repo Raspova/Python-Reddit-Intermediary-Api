@@ -7,7 +7,6 @@ bcrypt==3.1.7
 beautifulsoup4==4.9.3
 bleach==4.1.0
 blivet==3.3.3
-blivet-gui==2.3.0
 bottle==0.12.19
 cached-property==1.5.2
 cairocffi==1.2.0
