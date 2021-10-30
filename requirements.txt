@@ -3,3 +3,4 @@ Jinja2==3.0.2
 Werkzeug==2.0.2
 certifi==2020.12.5
 chardet==4.0.0
+gunicorne==20.0.1
