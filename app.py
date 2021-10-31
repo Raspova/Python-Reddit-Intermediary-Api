@@ -15,34 +15,6 @@ header = {'User-Agent': 'RedTek',}
 headers_g = {"":{}}
 
 
-#buff = requests.get('https://oauth.reddit.com/api/v1/me', headers=headers)
-#print(buff.json()) 
-
-
-
-#buff = req.get('https://oauth.reddit.com/best', headers=headers, params={"limit":"100","after":after})
-#for post in buff.json()['data']['children']:
-#        #if (".jpg" in post['data']['url'] ):
-#        pprint(post, indent=4, sort_dicts=True)
-#        #print(post['data']['url'])
-#        #print(post['data']['author'])
-#        #print(post['data']['permalink'])
-#        #print(post['data']['title'])
-#        #print("\n\n\n")
-#        after = post['kind'] + '_' + post['data']['id']
-#
-#buff = req.get('https://oauth.reddit.com/best', headers=headers, params={"limit":"100", "after":after})
-#for post in buff.json()['data']['children']:
-#        if (".jpg" in post['data']['url'] ):
-#                #pprint(post, indent=4, sort_dicts=True)
-#                pprint(post['data']['url'], indent=4, sort_dicts=True)
-#res = req.get("https://oauth.reddit.com/r/python/hot",
-#                   headers=headers)
-#
-#print(res.json()) 
-#after = ""
-
-
 @app.route('/api/oath/<tok>', methods=['GET'])
 def get_oath(tok):
         global headers_g
@@ -62,43 +34,52 @@ def get_oath(tok):
 
 @app.route('/api/<id>/<r>', methods=['GET'])
 def get_bestt():
-        return redirect('<id>/best/""')
+        return redirect('<id>/<r>/""')
 
 
 @app.route('/api/<id>/<r>/<last>', methods=['GET'])
 def get_r_content(last, id, r):
         ret = []
-        while len(ret) < 35 :
-                buff = req.get('https://oauth.reddit.com/r/' + r, headers=headers_g[id], params={"limit":"100","after":last})
-                for post in buff.json()['data']['children']:
-                        if ((".jpg" in post['data']['url'] )
-                        and not (".imgur" in post['data']['url'] )):
+        if (r == "best") or (r == "hot") or (r == "new") or (r == "top") :
+                buff = req.get('https://oauth.reddit.com/' + r, headers=headers_g[id], params={"limit":"200","after":last})
+        else: 
+                buff = req.get('https://oauth.reddit.com/r/' + r, headers=headers_g[id], params={"limit":"200","after":last})
+        for post in buff.json()['data']['children']:
+                if not (".imgur" in post['data']['url']):
+                        if (post['data']['is_video'] == True):
                                 ret.append({
+                                "type":"video",
+                                'url':str(post['data']['media']['reddit_video']['fallback_url']).split("?", -1)[0],
+                                'author':post['data']['author'],
+                                'permalink':str(post['data']['permalink']).split("/r/")[1].split("/")[0],
+                                'title':post['data']['title'],
+                                'id':last,
+                                'selftext':post['data']['selftext'],
+                                })
+                        elif (".jpg" in post['data']['url']) or  (".png" in post['data']['url']) or (".gif" in  post['data']['url']):
+                                ret.append({
+                                "type":"image",
                                 'url':post['data']['url'],
                                 'author':post['data']['author'],
-                                'permalink':post['data']['permalink'],
+                                'permalink':str(post['data']['permalink']).split("/r/")[1].split("/")[0],
                                 'title':post['data']['title'],
-                                'id':last
+                                'id':last,
+                                'selftext':post['data']['selftext'],
                                 })
-                                last = post['kind'] + '_' + post['data']['id']
+                        #elif ("redd" in post['data']['url']):
+                        else:
+                                ret.append({
+                                "type":"Unspecified",
+                                'url':post['data']['url'],
+                                'author':post['data']['author'],
+                                'permalink':str(post['data']['permalink']).split("/r/")[1].split("/")[0],
+                                'title':post['data']['title'],
+                                'id':last,
+                                'selftext':post['data']['selftext'],
+                                })        
+                        last = post['kind'] + '_' + post['data']['id']
         return jsonify(ret)
 
-@app.route('/api/<id>/best/<last>', methods=['GET'])
-def get_best(last, id):
-        ret = []
-        while len(ret) < 35 :
-                buff = req.get('https://oauth.reddit.com/best', headers=headers_g[id], params={"limit":"100","after":last})
-                for post in buff.json()['data']['children']:
-                        if (".jpg" in post['data']['url'] ):
-                                ret.append({
-                                'url':post['data']['url'],
-                                'author':post['data']['author'],
-                                'permalink':post['data']['permalink'],
-                                'title':post['data']['title'],
-                                'id':last
-                                })
-                                last = post['kind'] + '_' + post['data']['id']
-        return jsonify(ret)
 
 if __name__ == "__main__":
         app.run("0.0.0.0", 8081, debug=True)
